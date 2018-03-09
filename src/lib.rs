@@ -39,7 +39,7 @@ extern crate futures_cpupool;
 use std::{fmt, fs, io};
 use std::path::Path;
 
-use futures::{Future, Poll};
+use futures::{future, Future, Poll};
 use futures_cpupool::{CpuFuture, CpuPool};
 
 pub use self::read::{FsReadStream, ReadOptions};
@@ -110,6 +110,11 @@ impl FsPool {
     /// Returns a `Future` that resolves when the target directory is created.
     pub fn create_dir_all<P: AsRef<Path> + Send + 'static>(&self, path: P) -> FsFuture<()> {
         fs(self.cpu_pool.spawn_fn(move || fs::create_dir_all(path)))
+    }
+
+    /// Returns a `Future` that resolves when the path is determined to exist (or not).
+    pub fn exists<P: AsRef<Path> + Send + 'static>(&self, path: P) -> FsFuture<bool> {
+        fs(self.cpu_pool.spawn_fn(move || future::ok(Path::exists(path.as_ref()))))
     }
 }
 
