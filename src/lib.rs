@@ -101,6 +101,16 @@ impl FsPool {
     pub fn delete<P: AsRef<Path> + Send + 'static>(&self, path: P) -> FsFuture<()> {
         fs(self.cpu_pool.spawn_fn(move || fs::remove_file(path)))
     }
+
+    /// Returns a `Future` that resolves when the target directory is created.
+    pub fn create_dir<P: AsRef<Path> + Send + 'static>(&self, path: P) -> FsFuture<()> {
+        fs(self.cpu_pool.spawn_fn(move || fs::create_dir(path)))
+    }
+
+    /// Returns a `Future` that resolves when the target directory is created.
+    pub fn create_dir_all<P: AsRef<Path> + Send + 'static>(&self, path: P) -> FsFuture<()> {
+        fs(self.cpu_pool.spawn_fn(move || fs::create_dir_all(path)))
+    }
 }
 
 impl Default for FsPool {
