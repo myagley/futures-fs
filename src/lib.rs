@@ -116,6 +116,11 @@ impl FsPool {
     pub fn exists<P: AsRef<Path> + Send + 'static>(&self, path: P) -> FsFuture<bool> {
         fs(self.cpu_pool.spawn_fn(move || future::ok(Path::exists(path.as_ref()))))
     }
+
+    /// Returns a `Future` that resolves when the path is determined to exist (or not).
+    pub fn metadata<P: AsRef<Path> + Send + 'static>(&self, path: P) -> FsFuture<fs::Metadata> {
+        fs(self.cpu_pool.spawn_fn(move || fs::metadata(path)))
+    }
 }
 
 impl Default for FsPool {
